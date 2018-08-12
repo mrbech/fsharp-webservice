@@ -1,0 +1,10 @@
+version: '3'
+services:
+    backend:
+        ports:
+            - "127.0.0.1:3000:3000"
+        volumes:
+            - .:/src
+        working_dir: /src/app
+        image: "microsoft/dotnet:sdk"
+        command: dotnet watch run
