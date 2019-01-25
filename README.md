@@ -9,3 +9,17 @@ The project will explore:
 - Micro services (in mono project) with shared utility library 
 - Service communication (perhaps using
   [SwaggerProvider](http://fsprojects.github.io/SwaggerProvider/))
+
+## VIM: FSharp Language Server
+Install
+[https://github.com/natebosch/vim-lsc](https://github.com/natebosch/vim-lsc)
+
+Using supertab, no automatic autocomplete, and with hover info:
+```
+let g:lsc_server_commands = {'fsharp': 'docker-compose run fsharp-language-server'}
+let g:lsc_enable_autocomplete = v:false
+let g:lsc_auto_map = {
+    \ 'ShowHover': '<Leader>t',
+    \ 'Completion': 'omnifunc'
+    \}
+```

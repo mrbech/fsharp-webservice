@@ -3,8 +3,13 @@ services:
     backend:
         ports:
             - "127.0.0.1:3000:3000"
+        build: .
         volumes:
-            - .:/src
-        working_dir: /src/app
-        image: "microsoft/dotnet:sdk"
+            - .:/home/mrb/projects/fsharp-webservice
         command: dotnet watch run
+    fsharp-language-server:
+        volumes:
+            - .:/home/mrb/projects/fsharp-webservice
+        build: .
+        working_dir: /home/mrb/projects/fsharp-webservice
+        command: ./fsharp-language-server
