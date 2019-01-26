@@ -13,6 +13,8 @@ WORKDIR /fsharp-language-server
 RUN npm install
 RUN dotnet build -c Release
 
-ADD . ${PROJECT_DIR}/fsharp-webservice
-WORKDIR ${PROJECT_DIR}/fsharp-webservice/app
+ARG PROJECT_DIR
+
+ADD . $PROJECT_DIR/fsharp-webservice
+WORKDIR $PROJECT_DIR/fsharp-webservice/app
 RUN dotnet build
