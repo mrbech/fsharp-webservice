@@ -29,3 +29,10 @@ services:
             - .:${PROJECT_DIR}/fsharp-webservice
         working_dir: ${PROJECT_DIR}/fsharp-webservice
         command: fsharpi -r obj/Debug/netcoreapp2.1/app.dll
+    database:
+        image: postgres:11
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: todo
+            POSTGRES_PASSWORD: todo
