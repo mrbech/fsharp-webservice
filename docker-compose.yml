@@ -13,3 +13,8 @@ services:
         build: .
         working_dir: /home/mrb/projects/fsharp-webservice
         command: ./fsharp-language-server
+    fsi:
+        build: .
+        volumes:
+            - .:/home/mrb/projects/fsharp-webservice
+        command: fsharpi -r obj/Debug/netcoreapp2.1/app.dll
