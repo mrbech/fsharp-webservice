@@ -5,16 +5,16 @@ services:
             - "127.0.0.1:3000:3000"
         build: .
         volumes:
-            - .:/home/mrb/projects/fsharp-webservice
+            - .:${PROJECT_DIR}/fsharp-webservice
         command: dotnet watch run
     fsharp-language-server:
         volumes:
-            - .:/home/mrb/projects/fsharp-webservice
+            - .:${PROJECT_DIR}/fsharp-webservice
         build: .
-        working_dir: /home/mrb/projects/fsharp-webservice
+        working_dir: ${PROJECT_DIR}/fsharp-webservice
         command: ./fsharp-language-server
     fsi:
         build: .
         volumes:
-            - .:/home/mrb/projects/fsharp-webservice
+            - .:${PROJECT_DIR}/fsharp-webservice
         command: fsharpi -r obj/Debug/netcoreapp2.1/app.dll
