@@ -3,8 +3,18 @@ services:
     backend:
         ports:
             - "127.0.0.1:3000:3000"
+        build: .
         volumes:
-            - .:/src
-        working_dir: /src/app
-        image: "microsoft/dotnet:sdk"
+            - .:${PROJECT_DIR}/fsharp-webservice
         command: dotnet watch run
+    fsharp-language-server:
+        volumes:
+            - .:${PROJECT_DIR}/fsharp-webservice
+        build: .
+        working_dir: ${PROJECT_DIR}/fsharp-webservice
+        command: ./fsharp-language-server
+    fsi:
+        build: .
+        volumes:
+            - .:${PROJECT_DIR}/fsharp-webservice
+        command: fsharpi -r obj/Debug/netcoreapp2.1/app.dll
