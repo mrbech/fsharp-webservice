@@ -11,15 +11,25 @@ The project will explore:
   [SwaggerProvider](http://fsprojects.github.io/SwaggerProvider/))
 
 ## VIM: FSharp Language Server
-Install
-[https://github.com/natebosch/vim-lsc](https://github.com/natebosch/vim-lsc)
+This project contains the [FSharp Language
+Server](https://github.com/georgewfraser/fsharp-language-server) running inside
+docker. The following is an example of using it with vim-lsc, but it should work
+with any VIM language server plugin. Theoretically it should also work with
+other editors.
 
-Using supertab, no automatic autocomplete, and with hover info:
+Install
+[https://github.com/natebosch/vim-lsc](https://github.com/natebosch/vim-lsc) and
+configure as you like.
+
+First we need set an environment variable with the absolute path of the parent
+directory of this projects directory, example: `PROJECT_DIR=$HOME/projects`
+
+Then add the language server:
+
 ```
 let g:lsc_server_commands = {'fsharp': 'docker-compose run fsharp-language-server'}
-let g:lsc_enable_autocomplete = v:false
-let g:lsc_auto_map = {
-    \ 'ShowHover': '<Leader>t',
-    \ 'Completion': 'omnifunc'
-    \}
 ```
+
+As long as you are running `vim` in this projects directory or any of its
+subdirectories the language server should work, (this is due to how
+docker-compose resolves the docker-compose.yml file).
