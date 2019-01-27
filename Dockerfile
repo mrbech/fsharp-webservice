@@ -7,7 +7,7 @@ RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
 RUN apt-get install -y nodejs
 
 WORKDIR /
-RUN git clone https://github.com/mrbech/fsharp-language-server
+RUN git clone https://github.com/georgewfraser/fsharp-language-server
 WORKDIR /fsharp-language-server
 
 RUN npm install
