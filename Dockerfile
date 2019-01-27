@@ -16,5 +16,5 @@ RUN dotnet build -c Release
 ARG PROJECT_DIR
 
 ADD . $PROJECT_DIR/fsharp-webservice
-WORKDIR $PROJECT_DIR/fsharp-webservice/app
-RUN dotnet build
+WORKDIR $PROJECT_DIR/fsharp-webservice
+RUN dotnet build app

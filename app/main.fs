@@ -71,6 +71,5 @@ let app =
 let config = { defaultConfig with bindings = [HttpBinding.createSimple HTTP "0.0.0.0" 3000]  }
 [<EntryPoint>]
 let main _ =
-    Migrate.migrate () |> ignore
     startWebServer config app
     0
