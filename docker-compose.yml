@@ -19,14 +19,6 @@ services:
             args:
                 PROJECT_DIR: ${PROJECT_DIR}
         command: ./fsharp-language-server
-    fsi:
-        build:
-            context: .
-            args:
-                PROJECT_DIR: ${PROJECT_DIR}
-        volumes:
-            - .:${PROJECT_DIR}/fsharp-webservice
-        command: fsharpi
     database:
         image: postgres:11
         ports:
