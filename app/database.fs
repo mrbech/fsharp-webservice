@@ -11,3 +11,7 @@ type sql = SqlDataProvider<
             ResolutionPath = resPath,
             IndividualsAmount = 1000,
             UseOptionTypes = true>;;
+type Context = sql.dataContext
+type Todo = Context.``public.todosEntity``
+
+let getTodos (ctx: Context) = ctx.Public.Todos |> Seq.toList
