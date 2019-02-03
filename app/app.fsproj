@@ -3,6 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <FscToolPath>/usr/bin</FscToolPath>
+    <FscToolExe>fsharpc</FscToolExe>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,11 +12,32 @@
     <Compile Include="main.fs" />
   </ItemGroup>
 
+  <ItemGroup><!-- Mono fix -->
+      <Reference Include="FSharp.Data.SqlProvider">
+          <HintPath>/root/.nuget/packages/sqlprovider/1.1.58/lib/net451/FSharp.Data.SqlProvider.dll</HintPath>
+      </Reference>
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="FSharp.Json" Version="0.3.3" />
     <PackageReference Include="Npgsql" Version="3.2.7" />
     <PackageReference Include="SQLProvider" Version="1.1.58" />
     <PackageReference Include="Suave" Version="2.4.3" />
+    <PackageReference Include="System.Console" Version="4.3.1" />
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.5.1" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.2" />
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+  <Exec Command="mkdir -p temp" />
+      <Exec Command="cp /root/.nuget/packages/npgsql/3.2.7/lib/net451/Npgsql.dll temp/ " />
+      <Exec Command="cp /root/.nuget/packages/system.threading.tasks.extensions/4.5.2/lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll temp/ " />
+      <Exec Command="cp /root/.nuget/packages/system.runtime.compilerservices.unsafe/4.4.0/lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll temp/ " />
+  </Target>
 
 </Project>

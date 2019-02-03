@@ -39,7 +39,9 @@ type UpdateTodo = {
 let mutable todos: Todo list = []
 
 //Endpoints
-let getEndpoint () = todos
+let getEndpoint () = 
+    Database.getTodos (Database.getContext()) 
+        |> List.map (fun t -> { id = t.Id; message = t.Message; createdAt = t.CreatedAt })
 let createEndpoint (c: CreateTodo) = 
     let todo = { 
         id = (todos |> List.tryHead |> Option.map (fun t -> t.id) |> Option.defaultValue 0) + 1 

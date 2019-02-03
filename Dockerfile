@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2-sdk
+FROM fsharp:10.2-netcore
 
 RUN apt-get update
 RUN apt-get install -y gnupg git
