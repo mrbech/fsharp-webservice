@@ -7,6 +7,9 @@ services:
             context: .
             args:
                 PROJECT_DIR: ${PROJECT_DIR}
+        environment:
+            DOTNET_RUNNING_IN_CONTAINER: 1
+            DOTNET_USE_POLLING_FILE_WATCHER: 1
         volumes:
             - .:${PROJECT_DIR}/fsharp-webservice
         command: bash -c 'dotnet run --project migrate && dotnet watch --project app run'

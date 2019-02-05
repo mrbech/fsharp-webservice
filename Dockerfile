@@ -1,7 +1,7 @@
 FROM fsharp:10.2-netcore
 
 RUN apt-get update
-RUN apt-get install -y gnupg git
+RUN apt-get install -y gnupg git procps
 
 RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
 RUN apt-get install -y nodejs
