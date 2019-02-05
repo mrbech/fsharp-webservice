@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <FscToolPath>/usr/bin</FscToolPath>
     <FscToolExe>fsharpc</FscToolExe>
+    <DefineConstants>BUILD</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
