@@ -36,28 +36,23 @@ type UpdateTodo = {
     message: string 
 }
 
-let mutable todos: Todo list = []
-
 //Endpoints
-let getEndpoint () = todos
+let getEndpoint () = 
+    let ctx = Database.getContext()
+    Database.getTodos ctx
+        |> List.map (fun t -> t.MapTo<Todo>())
+
 let createEndpoint (c: CreateTodo) = 
-    let todo = { 
-        id = (todos |> List.tryHead |> Option.map (fun t -> t.id) |> Option.defaultValue 0) + 1 
-        message = c.message
-        createdAt = System.DateTime.Now
-    }
-    todos <- todo::todos
-    Ok todo
+    let ctx = Database.getContext()
+    let todo = Database.createTodo ctx c.message
+    Ok (todo.MapTo<Todo>())
 
 let updateEndpoint (u: UpdateTodo) = 
-    let updater = fun (v, l) (t: Todo) -> 
-        if t.id = u.id then let r = { t with message = u.message  } in (Some r, r::l) else (v, t::l)
-    let updateResult = List.fold updater (None, []) todos
-    match updateResult with
-    | (None, _) -> Error "Todo not found"
-    | (Some t, updatedTodo) ->
-        todos <- updatedTodo
-        Ok t
+    let ctx = Database.getContext()
+    match (Database.updateTodo ctx u.id u.message) with
+    | None -> Error "Todo not found"
+    | Some t ->
+        Ok (t.MapTo<Todo>())
     
 
 //Application
@@ -70,6 +65,6 @@ let app =
 
 let config = { defaultConfig with bindings = [HttpBinding.createSimple HTTP "0.0.0.0" 3000]  }
 [<EntryPoint>]
-let main argv =
+let main _ =
     startWebServer config app
     0

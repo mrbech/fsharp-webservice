@@ -7,10 +7,13 @@ services:
             context: .
             args:
                 PROJECT_DIR: ${PROJECT_DIR}
+        environment:
+            DOTNET_RUNNING_IN_CONTAINER: 1
+            DOTNET_USE_POLLING_FILE_WATCHER: 1
         volumes:
             - .:${PROJECT_DIR}/fsharp-webservice
-        working_dir: ${PROJECT_DIR}/fsharp-webservice/app
-        command: dotnet watch run
+        command: bash -c 'dotnet run --project migrate && dotnet watch --project app run'
+
     fsharp-language-server:
         volumes:
             - .:${PROJECT_DIR}/fsharp-webservice
@@ -18,14 +21,11 @@ services:
             context: .
             args:
                 PROJECT_DIR: ${PROJECT_DIR}
-        working_dir: ${PROJECT_DIR}/fsharp-webservice
         command: ./fsharp-language-server
-    fsi:
-        build:
-            context: .
-            args:
-                PROJECT_DIR: ${PROJECT_DIR}
-        volumes:
-            - .:${PROJECT_DIR}/fsharp-webservice
-        working_dir: ${PROJECT_DIR}/fsharp-webservice
-        command: fsharpi -r obj/Debug/netcoreapp2.1/app.dll
+    database:
+        image: postgres:11
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: todo
+            POSTGRES_PASSWORD: todo
