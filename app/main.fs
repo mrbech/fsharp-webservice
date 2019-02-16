@@ -20,13 +20,6 @@ let endpoint (endpoint: 'a -> Result<'b, string>) =
 let fetchEndpoint (endpoint: Unit -> 'b) =
     request (fun _ -> OK (endpoint() |> Json.serialize))
 
-//Type + Data
-type Todo = { 
-    id: int
-    message: string 
-    createdAt: System.DateTime
-}
-
 type CreateTodo = {
     message: string
 }
@@ -37,23 +30,11 @@ type UpdateTodo = {
 }
 
 //Endpoints
-let getEndpoint () = 
-    let ctx = Database.getContext()
-    Database.getTodos ctx
-        |> List.map (fun t -> t.MapTo<Todo>())
+let getEndpoint () = Todo.getAll()
 
-let createEndpoint (c: CreateTodo) = 
-    let ctx = Database.getContext()
-    let todo = Database.createTodo ctx c.message
-    Ok (todo.MapTo<Todo>())
+let createEndpoint (c: CreateTodo) = Todo.create c.message |> Ok
 
-let updateEndpoint (u: UpdateTodo) = 
-    let ctx = Database.getContext()
-    match (Database.updateTodo ctx u.id u.message) with
-    | None -> Error "Todo not found"
-    | Some t ->
-        Ok (t.MapTo<Todo>())
-    
+let updateEndpoint (u: UpdateTodo) = Todo.update u.id u.message |> Ok
 
 //Application
 let app =
