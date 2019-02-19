@@ -17,4 +17,4 @@ ARG PROJECT_DIR
 
 ADD . $PROJECT_DIR/fsharp-webservice
 WORKDIR $PROJECT_DIR/fsharp-webservice
-RUN dotnet restore app
+RUN dotnet restore
