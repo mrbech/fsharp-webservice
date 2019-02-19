@@ -31,3 +31,10 @@ let g:lsc_server_commands = {'fsharp': 'docker-compose run fsharp-language-serve
 As long as you are running `vim` in this projects directory or any of its
 subdirectories the language server should work, (this is due to how
 docker-compose resolves the docker-compose.yml file).
+
+When dependencies are added to the projects, the containers needs to be
+rebuild for the language server to be able to resolve them, just run:
+
+```
+docker-compose build
+```
