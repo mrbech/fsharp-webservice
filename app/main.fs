@@ -1,24 +1,14 @@
 ﻿module Main
-open Suave
-open Suave.Filters
-open Suave.Operators
-open Suave.Successful
-open Suave.RequestErrors
-open Suave.CORS
-open FSharp.Json
+open System
+open Microsoft.AspNetCore.Builder
+open Microsoft.AspNetCore.Hosting
+open Microsoft.AspNetCore.Http
+open Microsoft.Extensions.DependencyInjection
+open Microsoft.Extensions.Logging
+open FSharp.Control.Tasks.V2.ContextInsensitive
+open Giraffe
 
-//Utility
-let endpoint (endpoint: 'a -> Result<'b, string>) =
-    request (fun r -> 
-        let input = r.rawForm |> UTF8.toString |> Json.deserialize<'a>
-        let output = input |> endpoint
-        match output with
-        | Ok result -> OK (result |> Json.serialize)
-        | Error error -> BAD_REQUEST (error)
-    )
-
-let fetchEndpoint (endpoint: Unit -> 'b) =
-    request (fun _ -> OK (endpoint() |> Json.serialize))
+exception StatusError of (int * string)
 
 type CreateTodo = {
     message: string
@@ -30,22 +20,65 @@ type UpdateTodo = {
 }
 
 //Endpoints
-let getEndpoint () = Todo.getAll()
+let getEndpoint: HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        task {
+            return! json (Todo.getAll()) next ctx
+        }
 
-let createEndpoint (c: CreateTodo) = Todo.create c.message |> Ok
+let bind<'T> (ctx: HttpContext) = task {
+    try
+        return! ctx.BindModelAsync<'T>()
+    with
+        | _ -> return! (raise (StatusError(400, "Failed to parse body")))
+}
 
-let updateEndpoint (u: UpdateTodo) = Todo.update u.id u.message |> Ok
+let createEndpoint: HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        task {
+            let! c = bind<CreateTodo> ctx
+            let r = Todo.create (c.message)
+            return! json r next ctx
+        }
+
+let updateEndpoint: HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        task {
+            let! u = bind<UpdateTodo> ctx
+            return! json (Todo.update u.id u.message) next ctx
+        }
+
+let webApp = choose [
+    GET >=> getEndpoint
+    POST >=> createEndpoint
+    PUT >=> updateEndpoint
+]
 
 //Application
-let app =
-    cors defaultCORSConfig >=>
-    choose
-        [ GET >=> fetchEndpoint getEndpoint
-          POST  >=> endpoint createEndpoint
-          PUT >=> endpoint updateEndpoint ]
+let errorHandler (ex : Exception) (logger : ILogger) =
+    match ex with
+    | :? StatusError as se ->
+        let (code, message) = se.Data0
+        clearResponse >=> setStatusCode code >=> text message
+    | _  -> 
+        logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
+        clearResponse >=> ServerErrors.INTERNAL_ERROR ex.Message
 
-let config = { defaultConfig with bindings = [HttpBinding.createSimple HTTP "0.0.0.0" 3000]  }
+let configureApp (app : IApplicationBuilder) =
+    app
+        .UseGiraffeErrorHandler(errorHandler)
+        .UseGiraffe webApp
+
+let configureServices (services : IServiceCollection) =
+    services.AddGiraffe() |> ignore
+
 [<EntryPoint>]
 let main _ =
-    startWebServer config app
+    WebHostBuilder()
+        .UseKestrel()
+        .Configure(Action<IApplicationBuilder> configureApp)
+        .ConfigureServices(configureServices)
+        .UseUrls("http://*:3000")
+        .Build()
+        .Run()
     0
